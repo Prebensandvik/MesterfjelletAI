@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatGPT for Kids</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #chat-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 400px;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to ChatGPT for Kids!</h1>
+    <div id="chat-box">
+        <!-- Chat messages will appear here -->
+    </div>
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function fetchGPTResponse(prompt) {
+            const apiKey = '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';
+            const url = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            };
+            const body = JSON.stringify({
+                prompt: prompt,
+                max_tokens: 50
+            });
+
+            const response = await fetch(url, { method: 'POST', headers, body });
+            const data = await response.json();
+            return data.choices[0].text.trim();
+        }
+
+        async function sendMessage() {
+            const userMessage = document.getElementById('user-input').value;
+            const chatBox = document.getElementById('chat-box');
+
+            // Display user's message
+            chatBox.innerHTML += `<div class="message"><strong>You:</strong> ${userMessage}</div>`;
+
+            // Fetch GPT-3's response
+            const gptResponse = await fetchGPTResponse(userMessage);
+
+            // Display GPT-3's message
+            chatBox.innerHTML += `<div class="message"><strong>ChatGPT:</strong> ${gptResponse}</div>`;
+
+            // Clear user input
+            document.getElementById('user-input').value = '';
+
+            // Scroll to the bottom of the chat box
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
